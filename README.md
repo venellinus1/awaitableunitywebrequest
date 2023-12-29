@@ -2,6 +2,7 @@
 Awaitable Unity WebRequest Extension
 
 # Extension script:
+```csharp
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -19,21 +20,21 @@ public static class UnityWebRequestAwaiter
 
 # Sample Implementation:
 public async Task<string> Get(string url)
+{
+    using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+    {
+        await webRequest.SendWebRequest();
+        if (webRequest.result == UnityWebRequest.Result.ConnectionError)
         {
-            using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
-            {
-                await webRequest.SendWebRequest();
-                if (webRequest.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    throw new Exception(webRequest.error);
-                }
-                return webRequest.downloadHandler.text;
-            }
+            throw new Exception(webRequest.error);
         }
+        return webRequest.downloadHandler.text;
+    }
+}
 
 
 public async Task<string> GetWeatherForecastV1(IWeatherService webrequest)
-        {
-            string url = $"someurl.com";
-            return await webrequest.Get(url);
-        }
+{
+    string url = $"someurl.com";
+    return await webrequest.Get(url);
+}
